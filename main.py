@@ -3,6 +3,8 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import logging
 import os
 import requests
+from subprocess import Popen, PIPE
+import json
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
 
@@ -26,9 +28,12 @@ def photo(bot, update):
     print(fileName)
     newFile.download(fileName)
     bot.sendMessage(chat_id=update.message.chat_id, text="Downloaded, Trying To Upload On AnonFile")
-    uploading_cmd = f'curl -F "file=@{fileName}" https://api.anonfiles.com/upload'
-    print(uploading_cmd)
-    visit = os.system(uploading_cmd)
+#     uploading_cmd = f'curl -F "file=@{fileName}" https://api.anonfiles.com/upload'
+    stdout = Popen(f'curl -F "file=@{fileName}" https://api.anonfiles.com/upload', shell=True, stdout=PIPE).stdout
+    output = stdout.read()
+    visit = json.loads(output)
+#     print(uploading_cmd)
+#     visit = os.system(uploading_cmd)
     print(visit)
     full_link = visit['data']['file']['url']['full']
     short_link = visit['data']['file']['url']['short']
