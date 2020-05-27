@@ -21,30 +21,56 @@ except:
   pass
 
 def photo(bot, update):
-    media_id = update.effective_message.photo[-1].file_id
-    print(media_id)
-    newFile = bot.getFile(media_id)
-    fileName = os.path.split(newFile.file_path)[-1]
-    print(fileName)
-    newFile.download(fileName)
-    bot.sendMessage(chat_id=update.message.chat_id, text="Downloaded, Trying To Upload On AnonFile")
-#     uploading_cmd = f'curl -F "file=@{fileName}" https://api.anonfiles.com/upload'
-    stdout = Popen(f'curl -F "file=@{fileName}" https://api.anonfiles.com/upload', shell=True, stdout=PIPE).stdout
-    output = stdout.read()
-    visit = json.loads(output)
-#     print(uploading_cmd)
-#     visit = os.system(uploading_cmd)
-    print(visit)
-    full_link = visit['data']['file']['url']['full']
-    short_link = visit['data']['file']['url']['short']
-    messagee = f'''❤️ <b>Succesfully Uploaded</b>
-    
-    Short Link :- {short_link}
-    Full Link :- {full_link}
-    '''
-    
-    update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
+    try:  
+      media_id = update.effective_message.photo[-1].file_id
+      newFile = bot.getFile(media_id)
+      fileName = os.path.split(newFile.file_path)[-1]
+      newFile.download(fileName)
+      bot.sendMessage(chat_id=update.message.chat_id, text="Downloaded, Trying To Upload On AnonFile")
+      stdout = Popen(f'curl -F "file=@{fileName}" https://api.anonfiles.com/upload', shell=True, stdout=PIPE).stdout
+      output = stdout.read()
+      visit = json.loads(output)
+      full_link = visit['data']['file']['url']['full']
+      short_link = visit['data']['file']['url']['short']
+      messagee = f'''❤️ <b>Succesfully Uploaded</b>
 
+      Short Link :- {short_link}
+      Full Link :- {full_link}
+      '''
+
+      update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
+    except:
+      update.message.reply_text("Kindly Send Me Photos Less Then 20 MB")
+    try:
+      os.remove(fileName)
+    except:
+      pass
+    
+def documentt(bot, update):
+  try:
+      media_id = update.effective_message.document.file_id
+      newFile = bot.getFile(media_id)
+      fileName = os.path.split(newFile.file_path)[-1]
+      newFile.download(fileName)
+      bot.sendMessage(chat_id=update.message.chat_id, text="Downloaded, Trying To Upload On AnonFile")
+      stdout = Popen(f'curl -F "file=@{fileName}" https://api.anonfiles.com/upload', shell=True, stdout=PIPE).stdout
+      output = stdout.read()
+      visit = json.loads(output)
+      full_link = visit['data']['file']['url']['full']
+      short_link = visit['data']['file']['url']['short']
+      messagee = f'''❤️ <b>Succesfully Uploaded</b>
+
+      Short Link :- {short_link}
+      Full Link :- {full_link}
+      '''
+
+      update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
+    except:
+      update.message.reply_text("Kindly Send Me Photos Less Then 20 MB")
+  try:
+      os.remove(fileName)
+  except:
+      pass
 def main():
   updater = Updater(TOKEN)
   dp = updater.dispatcher
