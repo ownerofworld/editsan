@@ -37,13 +37,13 @@ def photo(bot, update):
     print(visit)
     full_link = visit['data']['file']['url']['full']
     short_link = visit['data']['file']['url']['short']
-    messagee = f'''<b>Succesfully Uploaded</b>
+    messagee = f'''❤️ <b>Succesfully Uploaded</b>
     
     Short Link :- {short_link}
     Full Link :- {full_link}
     '''
     
-    update.message.reply_text(messagee, parse_mode=ParseMode.html)
+    update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
 
 def main():
   updater = Updater(TOKEN)
