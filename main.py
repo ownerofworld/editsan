@@ -1,8 +1,52 @@
+from telegram import File, ParseMode
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+import logging
 import os
+import requests
 
-bashh = os.system('mkdir downloads')
-changing_dir = os.system('cd downloads')
-downloading = os.system('wget https://file-examples.com/wp-content/uploads/2017/02/zip_2MB.zip')
-print(downloading)
-list_dir = os.system('ls')
-print(list_dir)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+
+                    level=logging.INFO)
+
+logger = logging.getLogger(__name__)
+
+TOKEN = "999846356:AAFovHyEha6j4q_1G4-PLjU8xeaM8QttjMM"
+
+try:  
+  os.system('mkdir downloads')
+  os.system('cd downloads')
+except:
+  pass
+
+def photo(bot, update):
+    media_id = update.effective_message.photo[-1].file_id
+    print(media_id)
+    newFile = bot.getFile(media_id)
+    fileName = os.path.split(newFile.file_path)[-1]
+    print(fileName)
+    newFile.download(fileName)
+    bot.sendMessage(chat_id=update.message.chat_id, text="Downloaded, Trying To Upload On AnonFile")
+    uploading_cmd = f'curl -F "file=@{fileName}" https://api.anonfiles.com/upload'
+    print(uploading_cmd)
+    visit = os.system(uploading_cmd)
+    print(visit)
+    full_link = visit['data']['file']['url']['full']
+    short_link = visit['data']['file']['url']['short']
+    messagee = f'''<b>Succesfully Uploaded</b>
+    
+    Short Link :- {short_link}
+    Full Link :- {full_link}
+    '''
+    
+    update.message.reply_text(messagee, parse_mode=ParseMode.html)
+
+def main():
+  updater = Updater(TOKEN)
+  dp = updater.dispatcher
+  dp.add_handler(MessageHandler(Filters.photo, photo))
+  updater.start_polling()
+  logging.info("Starting Long Polling!")
+  updater.idle()
+
+if __name__=='__main__':
+  main()
