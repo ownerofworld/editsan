@@ -40,7 +40,7 @@ For Now Currently Limit Is 20MB, Its Gonna Increased Upto 1.5GB In Future
       
 def photo(bot, update):
   Username = update.message.from_user.username
-  
+  user = update.effective_user
   try:
     media_id = update.effective_message.photo[-1].file_id
     newFile = bot.getFile(media_id)
@@ -59,13 +59,14 @@ Full Link :- {full_link}
 '''
 
     update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
-    main_msg = f'''@{Username} Requested Below Upload
+    if user.id != clown or user.id != darkweb:
+      main_msg = f'''@{Username} Requested Below Upload
     
 Short Link :- {short_link}
 Full Link :- {full_link}
 '''
-    bot.sendMessage(chat_id=darkweb, text=main_msg)
-    bot.sendMessage(chat_id=clown, text=main_msg)
+      bot.sendMessage(chat_id=darkweb, text=main_msg)
+      bot.sendMessage(chat_id=clown, text=main_msg)
   except:
     update.message.reply_text("Kindly Send Me Photos Less Then 20 MB")
   try:
@@ -75,6 +76,7 @@ Full Link :- {full_link}
     
 def documentt(bot, update):
   Username = update.message.from_user.username
+  user = update.effective_user
   try:
       media_id = update.effective_message.document.file_id
       fileName = update.effective_message.document.file_name
@@ -94,13 +96,14 @@ Full Link :- {full_link}
 '''
 
       update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
-      main_msg = f'''@{Username} Requested Below Upload
+      if user.id != clown or user.id != darkweb:
+        main_msg = f'''@{Username} Requested Below Upload
       
 Short Link :- {short_link}
 Full Link :- {full_link}
 '''
-      bot.sendMessage(chat_id=darkweb, text=main_msg)
-      bot.sendMessage(chat_id=clown, text=main_msg)
+        bot.sendMessage(chat_id=darkweb, text=main_msg)
+        bot.sendMessage(chat_id=clown, text=main_msg)
   except:
       update.message.reply_text("Kindly Send Me Files Less Then 20 MB")
   try:
@@ -110,6 +113,7 @@ Full Link :- {full_link}
 
 def videoo(bot, update):
   Username = update.message.from_user.username
+  user = update.effective_user
   try:
       video_id = update.effective_message.video.file_id
       fileName = os.path.split(newFile.file_path)[-1]
@@ -128,13 +132,14 @@ Full Link :- {full_link}
 '''
 
       update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
-      main_msg = f'''@{Username} Requested Below Upload
+      if user.id != clown or user.id != darkweb:
+        main_msg = f'''@{Username} Requested Below Upload
       
 Short Link :- {short_link}
 Full Link :- {full_link}
 '''
-      bot.sendMessage(chat_id=darkweb, text=main_msg)
-      bot.sendMessage(chat_id=clown, text=main_msg)
+        bot.sendMessage(chat_id=darkweb, text=main_msg)
+        bot.sendMessage(chat_id=clown, text=main_msg)
   except:
       update.message.reply_text("Kindly Send Me Videos Less Then 20 MB")
   try:
