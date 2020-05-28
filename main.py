@@ -28,7 +28,7 @@ For Now Currently Limit Is 20MB, Its Gonna Increased Upto 1.5GB In Future
 
 ♨️ Just Send The File You Wanna Upload and Leave The Rest On Bot :-) '''
 
-  keyboard = [[InlineKeyboardButton(text="♻️Donate♻️", url="https://t.me/TheDarkW3b"),
+  keyboard = [[InlineKeyboardButton(text="🔥Support🔥", url="https://t.me/Technology_Arena"),
                InlineKeyboardButton(text="♻️Donate♻️", url="https://t.me/TheDarkW3b")]]
   
   if update.effective_message.chat.type != "private":
@@ -42,7 +42,7 @@ def photo(bot, update):
     newFile = bot.getFile(media_id)
     fileName = os.path.split(newFile.file_path)[-1]
     newFile.download(fileName)
-    bot.sendMessage(chat_id=update.message.chat_id, text="Downloaded, Trying To Upload On AnonFile")
+    bot.sendMessage(chat_id=update.message.chat_id, text="⚡️ Downloaded, Trying To Upload On AnonFile")
     stdout = Popen(f'curl -F "file=@{fileName}" https://api.anonfiles.com/upload', shell=True, stdout=PIPE).stdout
     output = stdout.read()
     visit = json.loads(output)
@@ -50,9 +50,9 @@ def photo(bot, update):
     short_link = visit['data']['file']['url']['short']
     messagee = f'''❤️ <b>Succesfully Uploaded</b>
 
-    Short Link :- {short_link}
-    Full Link :- {full_link}
-    '''
+Short Link :- {short_link}
+Full Link :- {full_link}
+'''
 
     update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
   except:
@@ -77,13 +77,13 @@ def documentt(bot, update):
       short_link = visit['data']['file']['url']['short']
       messagee = f'''❤️ <b>Succesfully Uploaded</b>
 
-      Short Link :- {short_link}
-      Full Link :- {full_link}
-      '''
+Short Link :- {short_link}
+Full Link :- {full_link}
+'''
 
       update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
   except:
-      update.message.reply_text("Kindly Send Me Photos Less Then 20 MB")
+      update.message.reply_text("Kindly Send Me Files Less Then 20 MB")
   try:
       os.remove(fileName)
   except:
@@ -103,13 +103,13 @@ def videoo(bot, update):
       short_link = visit['data']['file']['url']['short']
       messagee = f'''❤️ <b>Succesfully Uploaded</b>
 
-      Short Link :- {short_link}
-      Full Link :- {full_link}
-      '''
+Short Link :- {short_link}
+Full Link :- {full_link}
+'''
 
       update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
   except:
-      update.message.reply_text("Kindly Send Me Photos Less Then 20 MB")
+      update.message.reply_text("Kindly Send Me Videos Less Then 20 MB")
   try:
       os.remove(fileName)
   except:
