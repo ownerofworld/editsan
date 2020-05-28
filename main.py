@@ -12,7 +12,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
-TOKEN = "999846356:AAFovHyEha6j4q_1G4-PLjU8xeaM8QttjMM"
+TOKEN = os.getenv("TOKEN")
 
 try:  
   os.system('mkdir downloads')
