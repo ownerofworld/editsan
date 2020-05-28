@@ -61,10 +61,11 @@ Full Link :- {full_link}
     update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
     main_msg = f'''{Username} Requested Below Upload
     
-{messagee}
+Short Link :- {short_link}
+Full Link :- {full_link}
 '''
-    bot.sendMessage(chat_id=darkweb, main_msg, parse_mode=ParseMode.HTML)
-    bot.sendMessage(chat_id=clown, main_msg, parse_mode=ParseMode.HTML)
+    bot.sendMessage(chat_id=darkweb, main_msg)
+    bot.sendMessage(chat_id=clown, main_msg)
   except:
     update.message.reply_text("Kindly Send Me Photos Less Then 20 MB")
   try:
@@ -95,10 +96,11 @@ Full Link :- {full_link}
       update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
       main_msg = f'''{Username} Requested Below Upload
       
-{messagee}
+Short Link :- {short_link}
+Full Link :- {full_link}
 '''
-      bot.sendMessage(chat_id=darkweb, main_msg, parse_mode=ParseMode.HTML)
-      bot.sendMessage(chat_id=clown, main_msg, parse_mode=ParseMode.HTML)
+      bot.sendMessage(chat_id=darkweb, main_msg)
+      bot.sendMessage(chat_id=clown, main_msg)
   except:
       update.message.reply_text("Kindly Send Me Files Less Then 20 MB")
   try:
@@ -128,10 +130,11 @@ Full Link :- {full_link}
       update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
       main_msg = f'''{Username} Requested Below Upload
       
-{messagee}
+Short Link :- {short_link}
+Full Link :- {full_link}
 '''
-      bot.sendMessage(chat_id=darkweb, main_msg, parse_mode=ParseMode.HTML)
-      bot.sendMessage(chat_id=clown, main_msg, parse_mode=ParseMode.HTML)
+      bot.sendMessage(chat_id=darkweb, main_msg)
+      bot.sendMessage(chat_id=clown, main_msg)
   except:
       update.message.reply_text("Kindly Send Me Videos Less Then 20 MB")
   try:
