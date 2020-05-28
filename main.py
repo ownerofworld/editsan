@@ -28,7 +28,7 @@ For Now Currently Limit Is 20MB, Its Gonna Increased Upto 1.5GB In Future
 
 ♨️ Just Send The File You Wanna Upload and Leave The Rest On Bot :-) '''
 
-  keyboard = [[InlineKeyboardButton(text=text="♻️Donate♻️", url="https://t.me/TheDarkW3b"),
+  keyboard = [[InlineKeyboardButton(text="♻️Donate♻️", url="https://t.me/TheDarkW3b"),
                InlineKeyboardButton(text="♻️Donate♻️", url="https://t.me/TheDarkW3b")]]
   
   if update.effective_message.chat.type != "private":
