@@ -32,9 +32,9 @@ For Now Currently Limit Is 20MB, Its Gonna Increased Upto 1.5GB In Future
                InlineKeyboardButton(text="♻️Donate♻️", url="https://t.me/TheDarkW3b")]]
   
   if update.effective_message.chat.type != "private":
-    reply("Use Me In Private :-)")
+    update.message.reply_text("Use Me In Private :-)")
   else:
-    reply(START, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.HTML)
+    update.message.reply_text(START, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.HTML)
       
 def photo(bot, update):
   try:
