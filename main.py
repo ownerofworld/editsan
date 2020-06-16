@@ -134,7 +134,7 @@ def stats(client, message):
 
 
 @app.on_message(Filters.text & Filters.private)
-def download(client, messsage):
+def download(client, message):
     chat_id = message.from_user.id
     user_message = messsage.text
     username = message.from_user.username
