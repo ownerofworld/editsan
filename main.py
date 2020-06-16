@@ -1,162 +1,178 @@
-from telegram import File, ParseMode, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from pyrogram import Client, MessageHandler, Chat, Filters, InlineKeyboardButton, InlineKeyboardMarkup
 import logging
 import os
 import requests
 from subprocess import Popen, PIPE
 import json
+from bs4 import BeautifulSoup as bs
+import wget
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+LOGGER = logging.getLogger(__name__)
+logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
-                    level=logging.INFO)
-
-logger = logging.getLogger(__name__)
-
+# TOKEN = os.getenv("TOKEN")
 TOKEN = os.getenv("TOKEN")
+
+user_id = []
+
+app = Client(
+    "my_account",
+    api_id=1170033,
+    api_hash="5b2875309174291a0d6e03802e6c58c2",
+    bot_token=TOKEN
+)
+
 darkweb = 686021814
 clown = 1023799889
 
-try:  
-  os.system('mkdir downloads')
-  os.system('cd downloads')
-except:
-  pass
+def add_user(uid):
+    if uid not in user_id:
+        user_id.append(uid)
 
-def start(bot, update):
-  START = '''❤️ Welcome To <b>AnonFiles</b> Bot
+@app.on_message(Filters.command(["start", "help"]) & Filters.private)
+def start(client, message):
+    chat_id = message.from_user.id
+    START = '''❤️ Welcome To <b>AnonFiles</b> Bot
 
-This Bot Can Upload Document,Videos,Photos To anonfiles.com
-For Now Currently Limit Is 20MB, Its Gonna Increased Upto 1.5GB In Future
+This Bot Can Upload Files on anonfiles.com and Download Files of Size Upto 1.5GB In Free. I Only Work In Private Chats So Dont Add Me In Groups
 
-♨️ Just Send The File You Wanna Upload and Leave The Rest On Bot :-) '''
+♨️ Just Send The File (as Document) You Wanna Upload or Send Me The AnonFile Link You Wanna Download and Leave The Rest On Bot :-) '''
+    app.send_message(chat_id, START, parse_mode="html")
+    add_user(chat_id)
 
-  #keyboard = [[InlineKeyboardButton(text="🔥Support🔥", url="https://t.me/Technology_Arena"),
-              # InlineKeyboardButton(text="♻️Donate♻️", url="https://t.me/TheDarkW3b")]]
-  
-  if update.effective_message.chat.type != "private":
-    update.message.reply_text("Use Me In Private :-)")
-  else:
-    update.message.reply_text(START, parse_mode=ParseMode.HTML)
+@app.on_message(Filters.document & Filters.private)
+def upload(client, message):
+    chat_id = message.from_user.id
+    file_name = message.document.file_name
+    username = message.from_user.username
+    add_user(chat_id)
+    try:
+        download_start = app.send_message(chat_id, "Trying To **Download** Your File... Please Wait ❤️ \nBig Files Can Take Upto 30 Minutes So Dont Panic ")
+
+        dot = app.send_message(chat_id, "Downloading...")
+        def progress(current, total):
+            percent = f"{(current * 100) / total}%"
+            downloaded = f"⚡️ **Downloaded :-** {percent}"
+            app.edit_message_text(chat_id, dot.message_id, downloaded)
+            
+        app.download_media(message, progress=progress)
       
-def photo(bot, update):
-  Username = update.message.from_user.username
-  user = update.effective_user
-  try:
-    media_id = update.effective_message.photo[-1].file_id
-    newFile = bot.getFile(media_id)
-    fileName = os.path.split(newFile.file_path)[-1]
-    newFile.download(fileName)
-    bot.sendMessage(chat_id=update.message.chat_id, text="⚡️ Downloaded, Trying To Upload On AnonFile")
-    stdout = Popen(f'curl -F "file=@{fileName}" https://api.anonfiles.com/upload', shell=True, stdout=PIPE).stdout
-    output = stdout.read()
-    visit = json.loads(output)
-    full_link = visit['data']['file']['url']['full']
-    short_link = visit['data']['file']['url']['short']
-    messagee = f'''❤️ <b>Succesfully Uploaded</b>
+        app.edit_message_text(chat_id, download_start.message_id, "🌀 Succesfully Downloaded\nTrying To Upload On AnonFiles.com")
+        app.delete_messages(chat_id, dot.message_id)
+        
+        
+        change_dir = os.chdir("downloads")
+        stdout = Popen(f'curl -F "file=@{file_name}" https://api.anonfiles.com/upload', shell=True, stdout=PIPE).stdout
+        output = stdout.read()
+        visit = json.loads(output)
+        full_link = visit['data']['file']['url']['full']
+        short_link = visit['data']['file']['url']['short']
+        try:
+            os.remove(file_name)
+        except:
+            pass
+        anon_file_links = f'''❤️ **Succesfully Uploaded**
 
 Short Link :- {short_link}
 Full Link :- {full_link}
 '''
+        logs = f''' #Upload
+        
+@{username} Did Below Request
 
-    update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
-    if user.id != clown or user.id != darkweb:
-      main_msg = f'''@{Username} Requested Below Upload
+Short Link :- {short_link}
+Full Link :- {full_link}'''
+
+        
+        app.send_message(chat_id, anon_file_links)
+        app.send_message(darkweb, logs)
+        app.send_message(clown, logs)
+    except:
+        app.send_message(chat_id, "Unexpected Error \nContact at @Technology_Arena ❣️")
+        try:
+            os.remove(file_name)
+        except:
+            pass
+
+@app.on_message(Filters.command("broadcast") & Filters.private)
+def broadcast(client, message):
+    chat_id = message.chat.id
+    if chat_id == darkweb:
+        for uid in user_id:
+            app.forward_messages(
+                chat_id=uid,
+                from_chat_id=message.chat.id,
+                message_ids=message.reply_to_message.message_id,
+                as_copy=True
+            )
     
-Short Link :- {short_link}
-Full Link :- {full_link}
-'''
-      bot.sendMessage(chat_id=darkweb, text=main_msg)
-      bot.sendMessage(chat_id=clown, text=main_msg)
-  except:
-    update.message.reply_text("Kindly Send Me Photos Less Then 20 MB")
-  try:
-    os.remove(fileName)
-  except:
-    pass
+
+@app.on_message(Filters.command("users") & Filters.private)
+def get_users(client, message):
+    chat_id = message.from_user.id
+    if chat_id == darkweb:
+        total = "**Total users:** " + str(len(user_id))
+        with open("users.txt", "w+") as f:
+            f.write(str(user_id))
+            f.close()
     
-def documentt(bot, update):
-  Username = update.message.from_user.username
-  user = update.effective_user
-  try:
-      media_id = update.effective_message.document.file_id
-      fileName = update.effective_message.document.file_name
-      
-      newFile = bot.getFile(media_id)
-      newFile.download(fileName)
-      bot.sendMessage(chat_id=update.message.chat_id, text="Downloaded, Trying To Upload On AnonFile")
-      stdout = Popen(f'curl -F "file=@{fileName}" https://api.anonfiles.com/upload', shell=True, stdout=PIPE).stdout
-      output = stdout.read()
-      visit = json.loads(output)
-      full_link = visit['data']['file']['url']['full']
-      short_link = visit['data']['file']['url']['short']
-      messagee = f'''❤️ <b>Succesfully Uploaded</b>
+        try:
+            app.send_document(chat_id, "users.txt", caption=total)
+        except:
+            pass
 
-Short Link :- {short_link}
-Full Link :- {full_link}
-'''
+@app.on_message(Filters.command("stats") & Filters.private)
+def stats(client, message):
+    chat_id = message.from_user.id
+    if chat_id == darkweb:
+        total = "🌀 **Total users:** " + str(len(user_id))
+        app.send_message(chat_id, total)
 
-      update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
-      if user.id != clown or user.id != darkweb:
-        main_msg = f'''@{Username} Requested Below Upload
-      
-Short Link :- {short_link}
-Full Link :- {full_link}
-'''
-        bot.sendMessage(chat_id=darkweb, text=main_msg)
-        bot.sendMessage(chat_id=clown, text=main_msg)
-  except:
-      update.message.reply_text("Kindly Send Me Files Less Then 20 MB")
-  try:
-      os.remove(fileName)
-  except:
-      pass
 
-def videoo(bot, update):
-  Username = update.message.from_user.username
-  user = update.effective_user
-  try:
-      video_id = update.effective_message.video.file_id
-      fileName = os.path.split(newFile.file_path)[-1]
-      newFile = bot.getFile(video_id)
-      newFile.download(fileName)
-      bot.sendMessage(chat_id=update.message.chat_id, text="Downloaded, Trying To Upload On AnonFile")
-      stdout = Popen(f'curl -F "file=@{fileName}" https://api.anonfiles.com/upload', shell=True, stdout=PIPE).stdout
-      output = stdout.read()
-      visit = json.loads(output)
-      full_link = visit['data']['file']['url']['full']
-      short_link = visit['data']['file']['url']['short']
-      messagee = f'''❤️ <b>Succesfully Uploaded</b>
+@app.on_message(Filters.text & Filters.private)
+def download(client, messsage):
+    chat_id = message.from_user.id
+    user_message = messsage.text
+    username = message.from_user.username
+    if "anonfiles.com" in user_message:
+        req = requests.get(user_message)
+        if req.status_code == 200:
+            data = bs(req.text, 'html.parser')
+            download_link = data.find('a', {'id':'download-url'}).get('href')
+            file_name = wget.detect_filename(download_link)
+            reply = f'**{file_name}** is Downloading \n💢 Please Wait ....'
+            downloading = app.send_message(chat_id, reply)
+            wget.download(download_link)
+            app.edit_message_text(chat_id, downloading.message_id, "✅ **Successfully Downloaded**... Trying To Upload On Telegram")
+            app.send_document(chat_id, file_name, caption=file_name)
+            app.delete_messages(chat_id, downloading.message_id)
+            logs = f'''#Download
+            
+@{username} Did Below Request
 
-Short Link :- {short_link}
-Full Link :- {full_link}
-'''
+File Name :- {file_name}
+Link :- {download_link}'''
 
-      update.message.reply_text(messagee, parse_mode=ParseMode.HTML)
-      if user.id != clown or user.id != darkweb:
-        main_msg = f'''@{Username} Requested Below Upload
-      
-Short Link :- {short_link}
-Full Link :- {full_link}
-'''
-        bot.sendMessage(chat_id=darkweb, text=main_msg)
-        bot.sendMessage(chat_id=clown, text=main_msg)
-  except:
-      update.message.reply_text("Kindly Send Me Videos Less Then 20 MB")
-  try:
-      os.remove(fileName)
-  except:
-      pass
-    
-def main():
-  updater = Updater(TOKEN)
-  dp = updater.dispatcher
-  dp.add_handler(CommandHandler("start", start))
-  dp.add_handler(MessageHandler(Filters.photo, photo))
-  dp.add_handler(MessageHandler(Filters.document, documentt))
-  dp.add_handler(MessageHandler(Filters.document, videoo))
-  updater.start_polling()
-  logging.info("Starting Long Polling!")
-  updater.idle()
+            app.send_message(darkweb, logs)
+            app.send_message(clown, logs)
+            try:
+                os.remove(file_name)
+            except:
+                pass
+        else:
+            app.send_message(chat_id, "**Invalid Link...** Kindly Check Before Sending it \n🌀 **If You Think Its A Bug, Feel Free To Message At** @Technology_Arena")
+    else:
+        app.send_message(chat_id, "I Can Download only Anonfiles.com Files.\nSkip Greetings and Kindly Send me Link To **Download** or Send me File As Document I Will **Upload** It to anonfiles.com 😄")
 
-if __name__=='__main__':
-  main()
+
+app.add_handler(MessageHandler(start, Filters.command(["start", "help"]) & Filters.private))
+app.add_handler(MessageHandler(get_users, Filters.command("users") & Filters.private))
+app.add_handler(MessageHandler(broadcast, Filters.command("broadcast") & Filters.private))
+app.add_handler(MessageHandler(stats, Filters.command("stats") & Filters.private))
+app.add_handler(MessageHandler(upload, Filters.document & Filters.private))
+app.add_handler(MessageHandler(download, Filters.text & Filters.private))
+app.run()
