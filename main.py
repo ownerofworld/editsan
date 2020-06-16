@@ -136,7 +136,7 @@ def stats(client, message):
 @app.on_message(Filters.text & Filters.private)
 def download(client, message):
     chat_id = message.from_user.id
-    user_message = messsage.text
+    user_message = message.text
     username = message.from_user.username
     if "anonfiles.com" in user_message:
         req = requests.get(user_message)
