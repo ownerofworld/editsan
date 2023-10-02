@@ -5,4 +5,4 @@
 2 - Run Main.py
 
 ### Developer
-Coded By [@TheDarkw3b](https://t.me/TheDarkW3b) :-)
+Coded By [@ownerofworld](https://t.me/ownerofworld) :-)
