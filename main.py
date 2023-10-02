@@ -21,8 +21,8 @@ user_id = []
 
 app = Client(
     "my_account",
-    api_id=1170033,
-    api_hash="5b2875309174291a0d6e03802e6c58c2",
+    api_id=REPLACE_YOUR_APP_ID,
+    api_hash="REPLACE_YOUR_HASH",
     bot_token=TOKEN
 )
 
